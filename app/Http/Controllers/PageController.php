@@ -16,7 +16,7 @@ class PageController extends Controller
 
         // dd($user);
 
-        $resumes = Resume::where('user_id', $id)->get();
+        $resumes = Resume::where('user_id', $id)->latest()->get();
         // dd($resumes);
         return Inertia::render('Profile', [
             'resumes' => $resumes,

@@ -21,13 +21,17 @@ class Resume extends Model
         'summary',
         'education',
         'job_experience',
+        'certification',
         'skills',
+        'projects'
     ];
 
     protected $casts = [
         'education' => 'array',
         'job_experience' => 'array',
         'skills' => 'array',
+        'certification' => 'array',
+        'projects' => 'array'
     ];
 
     //  public function about_sections(): HasOne

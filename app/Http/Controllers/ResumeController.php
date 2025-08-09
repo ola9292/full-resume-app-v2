@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Resume;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Spatie\Browsershot\Browsershot;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+// use Storage;
 use Inertia\Inertia;
+use Spatie\Browsershot\Browsershot;
 
 class ResumeController extends Controller
 {
@@ -37,6 +39,7 @@ class ResumeController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
@@ -62,6 +65,18 @@ class ResumeController extends Controller
 
             'skills' => 'nullable|array',
             'skills.*.title' => 'nullable|string',
+
+            'certification' => 'nullable|array',
+            'certification.*.name' => 'nullable|string',
+            'certification.*.institution' => 'nullable|string',
+            'certification.*.year' => 'nullable|string',
+
+            'projects' => 'nullable|array',
+            'projects.*.name' => 'nullable|string',
+            'projects.*.link' => 'nullable|string',
+            'projects.*.year' => 'nullable|string',
+            'projects.*.description' => 'nullable|string',
+
         ]);
 
         // Store everything in one record
@@ -78,6 +93,8 @@ class ResumeController extends Controller
             'education' => $validated['education'] ?? [],
             'job_experience' => $validated['experience'] ?? [],
             'skills' => $validated['skills'] ?? [],
+            'certification' => $validated['certification'] ?? [],
+            'projects' => $validated['projects'] ?? [],
         ]);
 
         //return redirect()->back()->with('success', 'Resume saved successfully!');
@@ -87,11 +104,13 @@ class ResumeController extends Controller
     public function preview(Request $request, $id)
     {
         $user = auth()->user();
+        $activePayment = auth()->user()->getActivePayment();
         $resume = Resume::findOrFail($id);
 
 
         return Inertia::render('Preview', [
-            'resume' => $resume
+            'resume' => $resume,
+            'activePayment' => $activePayment
         ]);
     }
 
@@ -135,6 +154,17 @@ class ResumeController extends Controller
 
             'skills' => 'nullable|array',
             'skills.*.title' => 'nullable|string',
+
+            'certification' => 'nullable|array',
+            'certification.*.name' => 'nullable|string',
+            'certification.*.institution' => 'nullable|string',
+            'certification.*.year' => 'nullable|string',
+
+            'projects' => 'nullable|array',
+            'projects.*.name' => 'nullable|string',
+            'projects.*.link' => 'nullable|string',
+            'projects.*.year' => 'nullable|string',
+            'projects.*.description' => 'nullable|string',
         ]);
 
         $resume->update([
@@ -148,11 +178,21 @@ class ResumeController extends Controller
             'education' => $validated['education'] ?? [],
             'job_experience' => $validated['experience'] ?? [],
             'skills' => $validated['skills'] ?? [],
+            'certification' => $validated['certification'] ?? [],
+            'projects' => $validated['projects'] ?? [],
         ]);
 
         return to_route('preview', ['id' => $resume->id])->with('success', 'Resume updated!');
     }
 
+    public function destroy(Request $request, $id)
+    {
+        $resume = Resume::findOrFail($id);
+        if($resume){
+            $resume->delete();
+        }
+        return to_route('profile');
+    }
 
     public function download($id)
     {
@@ -182,14 +222,42 @@ class ResumeController extends Controller
     {
         $resume = Resume::findOrFail($id);
 
+        // dd($resume->projects);
+
         $pdf = Pdf::loadView('pdf.resume', compact('resume'));
         $pdf->setPaper('A4', 'portrait');
 
         return $pdf->stream('resume_preview.pdf');
     }
-
-        public function testAuthComponent()
+    public function userProfile(Request $request)
     {
-        return Inertia::render('Auth/Login');
+        $user = auth()->user();
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+
+            $user->avatar = $path; // Store 'avatars/dog.jpg' in the DB
+            $user->save();
+        }
+        return to_route('profile');
     }
+
+
+    public function userProfileDelete(Request $request)
+    {
+        $user = auth()->user();
+
+        // Check if user has an avatar
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            // Delete the file from storage
+            Storage::delete($user->avatar);
+        }
+
+        // Remove the avatar path from the DB
+        $user->avatar = null;
+        $user->save();
+
+       return to_route('profile');
+    }
+
+
 }

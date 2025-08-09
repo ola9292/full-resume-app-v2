@@ -89,7 +89,7 @@
             display: inline-block;
         }
 
-        /* job_Experience & Education */
+        /* job_Experience & projects */
         .item {
             border-left: 2px solid #000;
             padding-left: 10px;
@@ -194,6 +194,7 @@
     </style>
 </head>
 <body>
+
     <div class="resume-container">
         <!-- Header -->
         <div class="resume-header">
@@ -321,6 +322,87 @@
                                 </td>
                             </tr>
                         </table>
+                    </div>
+                </div>
+                @endif
+            @endforeach
+        </div>
+        @endif
+
+        <!-- Others -->
+        @if($resume->certification && is_array($resume->certification) && count($resume->certification) > 0)
+        <div class="section">
+            <h3 class="section-title">Certification</h3>
+            @foreach($resume->certification as $cert)
+                @if(!empty($cert['name']) || !empty($cert['institution']))
+                <div class="item no-break">
+                    <div class="item-header">
+                        <table class="item-header-table">
+                            <tr>
+                                <td class="item-info-cell">
+                                    <div class="item-title">{{ $cert['name'] ?? 'Name' }}</div>
+                                    <div class="item-subtitle">{{ $cert['institution'] ?? 'Institution' }}</div>
+                                </td>
+                                <td class="item-dates-cell">
+                                    <div class="item-dates">
+                                        @php
+                                            // $start = $cert['start'] ?? '';
+                                            // $end = $edu['end'] ?? 'Present';
+                                            // $dateRange = $start;
+                                            // if ($start && $end) {
+                                            //     $dateRange = $start . ' - ' . $end;
+                                            // } elseif ($end && $end !== 'Present') {
+                                            //     $dateRange = $end;
+                                            // } elseif (!$start && $end === 'Present') {
+                                            //     $dateRange = 'Present';
+                                            // }
+                                        @endphp
+                                        {{ $cert['year']}}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                @endif
+            @endforeach
+        </div>
+        @endif
+
+         @if($resume->projects && is_array($resume->projects) && count($resume->projects) > 0)
+        <div class="section">
+            <h3 class="section-title">projects</h3>
+            @foreach($resume->projects as $project)
+                @if(!empty($project['name']) || !empty($project['link']))
+                <div class="item no-break">
+                    <div class="item-header">
+                        <table class="item-header-table">
+                            <tr>
+                                <td class="item-info-cell">
+                                    <div class="item-title">{{ $project['name'] ?? 'Name' }}</div>
+                                    <div class="item-subtitle">{{ $project['link'] ?? 'Link' }}</div>
+                                </td>
+                                <td class="item-dates-cell">
+                                    <div class="item-dates">
+                                        @php
+
+                                        @endphp
+                                        {{ $project['year']}}
+                                        {{-- {{ $project['description']}} --}}
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="item-info-cell">
+
+
+                            </tr>
+                        </table>
+                        <div>
+                             @if(!empty($project['description']))
+                                    {{ $project['description']}}
+                            @endif
+                        </div>
                     </div>
                 </div>
                 @endif

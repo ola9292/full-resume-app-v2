@@ -43,7 +43,7 @@ import { ref } from 'vue'
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-white" href="#">Features</a>
+          <a class="nav-link text-white" href="/resume">Create</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-white" href="/profile">Profile</a>

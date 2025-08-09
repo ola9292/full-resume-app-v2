@@ -49,4 +49,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Resume::class);
     }
+    public function hasActivePayment()
+    {
+        return $this->payments()
+            ->where('status', 'succeeded')
+            ->where('expires_at', '>', now())
+            ->exists();
+    }
+
+    public function getActivePayment()
+    {
+        return $this->payments()
+            ->where('status', 'succeeded')
+            ->where('expires_at', '>', now())
+            ->latest('paid_at')
+            ->first();
+    }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

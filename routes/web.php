@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ResumeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ResumeController;
-use App\Http\Controllers\PageController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -34,21 +36,27 @@ Route::post('/login', [AuthController::class, 'store']);
 Route::middleware(['auth'])->group(function () {
 
      Route::post('/logout', [AuthController::class, 'destroy']);
-    Route::get('/profile', [PageController::class, 'index']);
+    Route::get('/profile', [PageController::class, 'index'])->name('profile');
 
     Route::get('/resume', [ResumeController::class, 'create']);
     Route::post('/resume', [ResumeController::class, 'store']);
     Route::get('/resume/{id}/edit', [ResumeController::class, 'edit'])->name('edit');
     Route::put('/resume/{id}/edit', [ResumeController::class, 'update'])->name('update');
+    Route::delete('/resume/{id}/delete', [ResumeController::class, 'destroy'])->name('destroy');
 
     Route::get('/preview/{id}', [ResumeController::class, 'preview'])->name('preview');
     // Resume download routes
-
+    Route::post('/user', [ResumeController::class, 'userProfile']);
+    Route::delete('/user/delete', [ResumeController::class, 'userProfileDelete']);
 });
 
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/resume/{id}/download', [ResumeController::class, 'download'])->name('resume.download');
-    Route::get('/resume/{id}/view', [ResumeController::class, 'view'])->name('resume.view');
+    Route::get('/resume/{id}/download', [ResumeController::class, 'download'])->name('resume.download')->middleware('check.payment');
+    Route::get('/resume/{id}/view', [ResumeController::class, 'view'])->name('resume.view')->middleware('check.payment');
+
+    Route::get('/stripe', [PaymentController::class, 'index'])->name('stripe.index');
+    Route::post('/stripe', [PaymentController::class, 'store'])->name('stripe.payment');
     });
+

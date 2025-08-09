@@ -43,6 +43,27 @@ const addSkill = () =>{
 const removeSkill = (index) =>{
     form.skills.splice(index, 1)
 }
+const addCertification = () =>{
+     form.certification.push({
+        name:'',
+        institution:'',
+        year:''
+    })
+}
+const removeCertification = (index) => {
+    form.certification.splice(index, 1)
+}
+const addProject = () =>{
+     form.projects.push({
+        name:'',
+        link:'',
+        year:'',
+        description:''
+    })
+}
+const removeProject = (index) => {
+    form.projects.splice(index, 1)
+}
 const form = useForm({
   name: props.resume.name ?? '',
   role: props.resume.role ?? '',
@@ -54,20 +75,23 @@ const form = useForm({
   education: props.resume.education ?? [],
   experience: props.resume.job_experience ?? [],
   skills: props.resume.skills ?? [],
+  certification: props.resume.certification ?? [],
+  projects: props.resume.projects ?? [],
 })
 </script>
 
 <template>
     <Nav />
     <div class="container mt-4">
-         <Transition>
-              <div class="progress mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    <div v-if="step == 1" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 25%"></div>
-                    <div v-if="step == 2" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 50%"></div>
-                    <div v-if="step == 3" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 75%"></div>
-                    <div v-if="step == 4" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
-                </div>
-        </Transition>
+
+        <div class="progress mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div v-if="step == 1" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 20%"></div>
+            <div v-if="step == 2" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 40%"></div>
+            <div v-if="step == 3" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 60%"></div>
+            <div v-if="step == 4" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 80%"></div>
+            <div v-if="step == 5" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+        </div>
+
         <h1 class="mb-3">Edit Page</h1>
         <div class="mb-3">
              <a href="/profile">
@@ -150,16 +174,100 @@ const form = useForm({
                         Add Experience
                     </button>
                  </div>
-
             </div>
 
-            <div class="mt-3" v-if="step == 4">
+            <div v-if="step == 5">
+                <h2>Certifications</h2>
+                <div class="accordion accordion-flush border" id="accordionFlushExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                           <span class="me-2">Courses and Certifications</span>  <span class="badge text-bg-primary">{{ form.certification.length }} {{ form.certification.length <= 1 ? 'Item' : 'Items' }}</span>
+                        </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <div v-for="(cert, index) in form.certification" :key="index" class="row g-3 border pb-2 mt-3">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <p>Certification {{ index + 1}}</p>
+                                        <button type="button" class="btn btn-outline-danger" @click="removeCertification(index)">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">Title/Name</label>
+                                        <input type="text" class="form-control" placeholder="Name" aria-label="" v-model="cert.name">
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">Organization/Institution</label>
+                                        <input type="text" class="form-control" placeholder="Institution" v-model="cert.institution">
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">Year</label>
+                                        <input type="text" class="form-control" placeholder="Year" v-model="cert.year">
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 mt-3">
+                                    <button type="button" class="btn btn-outline-secondary" @click="addCertification">Add Courses & Certifications</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                  <div class="accordion accordion-flush border" id="accordionFlushExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                           <span class="me-2">Projects</span>  <span class="badge text-bg-primary">{{ form.projects.length }} {{ form.projects.length <= 1 ? 'Item' : 'Items' }}</span>
+                        </button>
+                        </h2>
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <div v-for="(project, index) in form.projects" :key="index" class="row g-3 border pb-2 mt-3">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <p>Project {{ index + 1}}</p>
+                                        <button type="button" class="btn btn-outline-danger" @click="removeProject(index)">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">Title/Name</label>
+                                        <input type="text" class="form-control" placeholder="Name" aria-label="" v-model="project.name">
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">Project Link</label>
+                                        <input type="text" class="form-control" placeholder="Institution" v-model="project.link">
+                                    </div>
+                                    <div class="col">
+                                        <label for="exampleFormControlInput1" class="form-label">Year</label>
+                                        <input type="text" class="form-control" placeholder="Year" v-model="project.year">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlTextarea1" class="form-label">Project Description</label>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="project.description"></textarea>
+                                    </div>
+                                </div>
+                                <!--  -->
+                                <div class="d-grid gap-2 mt-3">
+                                    <button type="button" class="btn btn-outline-secondary" @click="addProject">Add Project</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mt-3" v-if="step == 5">
                 <button class="btn btn-primary">Update Resume</button>
             </div>
 
              <div class="mb-4 mt-4">
                 <button type="button" class="btn btn-outline-secondary me-2" @click="prev" :disabled="step == 1"><i class="fa-solid fa-angle-left"></i> Previous</button>
-                <button type="button" class="btn btn-outline-warning" @click="next" :disabled="step == 4">Next <i class="fa-solid fa-angle-right"></i></button>
+                <button type="button" class="btn btn-outline-warning" @click="next" :disabled="step == 5">Next <i class="fa-solid fa-angle-right"></i></button>
             </div>
 
 
@@ -170,4 +278,7 @@ const form = useForm({
     a{
         text-decoration: none;
     }
+    .progress-bar {
+  transition: width 0.5s ease-in-out;
+}
 </style>
